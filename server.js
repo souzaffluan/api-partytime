@@ -7,6 +7,7 @@ const cors = require('cors');
 //routes
 const authRouter = require('./backend/routes/authRoutes');
 const userRouter = require('./backend/routes/userRoutes');
+const partyRouter = require('./backend/routes/partyRoutes');
 
 
 //middlewares
@@ -23,6 +24,7 @@ app.use(express.static('public'));
 //atrelar rotas no express
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/party", partyRouter);
 
 //conexao mongo db
 

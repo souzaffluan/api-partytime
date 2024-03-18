@@ -18,7 +18,10 @@ const port = 3000;
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:8080', // Permitir apenas requisições vindas do frontend
+    optionsSuccessStatus: 200 // opcional
+  }));
 app.use(express.json());
 app.use(express.static('public'));
 //atrelar rotas no express

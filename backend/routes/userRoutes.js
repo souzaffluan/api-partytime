@@ -70,7 +70,7 @@ router.put('/',verifyToken, async (req, res)=>{
         res.json({error: null, msg: "Usuário atualizado com sucesso", data: updatedUser});
 
     }catch(error){
-        res.status(400).json({err});
+        res.status(400).json({error});
     }
 
 });

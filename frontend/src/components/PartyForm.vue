@@ -1,13 +1,12 @@
 <template>
     <div>
         <Message :msg="msg" :msgClass="msgClass" />
-        <form id="party-form" enctype="multipart/form-data"
-            @submit="page === 'newparty' ? createParty($event) : update($event)">
+        <form id="party-form" enctype="multipart/form-data" @submit="page === 'newparty' ? createParty($event) : update($event)">
             <input type="hidden" id="id" name="id" v-model="id">
             <input type="hidden" id="user_id" name="user_id" v-model="user_id">
             <div class="input-container">
                 <label for="title">Titulo do evento:</label>
-                <input type="text" id="title" name="tilte" v-model="title" placeholder="Digite um título">
+                <input type="text" id="title" name="title" v-model="title" placeholder="Digite um título">
             </div>
             <div class="input-container">
                 <label for="description">Descrição:</label>
@@ -30,7 +29,7 @@
             </div>
             <div class="input-container checkbox-container">
                 <label for="privacy">Evento privado?</label>
-                <input type="checkbox" id="privacy" name="privacy">
+                <input type="checkbox" id="privacy" name="privacy" v-model="privacy">
             </div>
 
             <InputSubmit :text="btnText"/>
@@ -41,36 +40,84 @@
 
 <script>
 import Message from './Message.vue';
-import InputSubmit from './form/InputSubmit.vue'
+import InputSubmit from './form/InputSubmit.vue';
 
 
 export default {
     name: "PartyForm",
+    components: {
+        InputSubmit, Message
+    },
     data(){
-        return{
-            id: this.party._id || null,
-            title: this.party.title || null,
-            description: this.party.description || null,
-            party_date: this.party.partyDate || null,
-            photos: this.party.photos || null,
-            privacy: this.party.privacy || false,
-            user_id: this.party._id || null,
-            msg: null,
-            msgClass: null,
-            showMiniImages: true
-        }
+        return {
+        id: this.party?._id || null,
+        title: this.party?.title || null,
+        description: this.party?.description || null,
+        party_date: this.party?.partyDate || null,
+        photos: this.party?.photos || [],
+        privacy: this.party?.privacy || false,
+        user_id: this.party?.userId || null,
+        msg: null,
+        msgClass: null,
+        showMiniImages: true,
+    }
 
     },
     props: ["party", "page", "btnText"],
 
-    components: {
-        InputSubmit, Message
-    },
+   
 
     methods: {
         async createParty(e) {
 
             e.preventDefault();
+
+            const formData = new FormData();
+
+            formData.append('title', this.title);
+            formData.append('description', this.description);
+            formData.append('party_date', this.party_date);
+            formData.append('privacy', this.privacy);
+
+            if(this.photos.length > 0){
+                for(const i of Object.keys(this.photos)){
+                    formData.append('photos', this.photos[i]);
+                }
+            }
+
+            //pegar token da storage
+            const token = this.$store.getters.token;
+            
+
+            await fetch("http://localhost:3000/api/party",{
+                method: "POST",
+                headers: {
+                    "auth-token": token
+                },
+                body: formData
+            })
+            .then((resp)=> resp.json())
+            .then((data)=>{
+
+                if(data.error){
+                    this.msg = data.error;
+                    this.msgClass = "error";
+                    
+                    console.log(formData);
+                }else{
+                    this.msg = data.msg;
+                    this.msgClass = "success";
+                }
+
+                setTimeout(()=>{
+                    this.msg = null;
+
+                    if(!data.error){
+                        this.$router.push('dashboard')
+                    }
+                }, 2000)
+
+            });
 
         },
 
@@ -86,6 +133,8 @@ export default {
 
         }
     }
+
+    
 }
 </script>
 

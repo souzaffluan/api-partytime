@@ -34,7 +34,7 @@ router.post(
     }
 
     //validações
-    if (title == "null" || description == "null" || partyDate == "null") {
+    if (title == "null" || description == "null" || partyDate == "null"){
       return res
         .status(400)
         .json({ error: "Preencha pelo menos nome, descrição e data!" });
@@ -47,12 +47,14 @@ router.post(
 
     const userId = userByToken._id.toString();
 
+    let photoPaths = [];
+
     try {
       const user = await User.findOne({ _id: userId });
       let photos = [];
       if (files && files.length > 0) {
         files.forEach((photo, i) => {
-          photos[i] = photo.path;
+          photoPaths.push(photo.path);
         });
       }
       const party = new Party({
@@ -61,6 +63,7 @@ router.post(
         partyDate: partyDate,
         privacy: req.body.privacy,
         userId: user._id.toString(),
+        photos: photoPaths
       });
       try {
         const newParty = await party.save();

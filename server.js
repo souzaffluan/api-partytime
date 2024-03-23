@@ -24,7 +24,7 @@ app.use(cors({
     optionsSuccessStatus: 200 // opcional
   }));
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('backend/public'));
 //atrelar rotas no express
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);

@@ -74,10 +74,12 @@ export default {
 
             const formData = new FormData();
 
+            
             formData.append('title', this.title);
             formData.append('description', this.description);
             formData.append('party_date', this.party_date);
             formData.append('privacy', this.privacy);
+            
 
             if (this.photos.length > 0) {
                 for (const i of Object.keys(this.photos)) {
@@ -115,6 +117,7 @@ export default {
                         if (!data.error) {
                             this.$router.push('dashboard')
                         }
+
                     }, 2000)
 
                 });
@@ -127,7 +130,55 @@ export default {
             this.showMiniImages = false;
 
         },
+        //altear festa
         async update(e) {
+
+            const formData = new FormData();
+
+            formData.append('id', this.id);
+            formData.append('title', this.title);
+            formData.append('description', this.description);
+            formData.append('party_date', this.party_date);
+            formData.append('privacy', this.privacy);
+            formData.append('user_id', this.user_id);
+
+            if (this.photos.length > 0) {
+                for (const i of Object.keys(this.photos)) {
+                    formData.append('photos', this.photos[i]);
+                }
+            }
+
+            //pegar token da storage
+            const token = this.$store.getters.token;
+
+
+            await fetch("http://localhost:3000/api/party", {
+                method: "PATCH",
+                headers: {
+                    "auth-token": token
+                },
+                body: formData
+            })
+                .then((resp) => resp.json())
+                .then((data) => {
+
+                    if (data.error) {
+                        this.msg = data.error;
+                        this.msgClass = "error";
+
+                        console.log(formData);
+                    } else {
+                        this.msg = data.msg;
+                        this.msgClass = "success";
+                    }
+
+                    setTimeout(() => {
+                        this.msg = null;
+
+                        
+                    }, 2000)
+
+                });
 
             e.preventDefault();
 

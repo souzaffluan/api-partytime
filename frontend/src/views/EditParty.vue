@@ -46,10 +46,12 @@ export default {
                     this.party.partyDate = this.party.partyDate.substring(0, 10);
 
                     this.party.photos.forEach((photo, index) => {
-                        this.party.photos[index] = photo.replace("public", "http://localhost:3000");
+                        photo = photo.replace(/\\/g, '/');
+
+                        this.party.photos[index] = photo.replace('backend/public', 'http://localhost:3000');
                     });
 
-                    console.log(this.party.photos);
+                    
 
                     this.componentKey += 1;
 

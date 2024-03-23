@@ -73,6 +73,13 @@ const routes = [
       requiresAuth:true
     }
   },
+
+  {
+    path: '/party/:id',
+    name: 'Party',
+    component: () => import(/* webpackChunkName: "party" */ '../views/Party.vue'),
+    
+  },
 ]
 
 const router = createRouter({

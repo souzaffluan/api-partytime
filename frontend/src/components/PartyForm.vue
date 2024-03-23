@@ -1,7 +1,8 @@
 <template>
     <div>
         <Message :msg="msg" :msgClass="msgClass" />
-        <form id="party-form" enctype="multipart/form-data" @submit="page === 'newparty' ? createParty($event) : update($event)">
+        <form id="party-form" enctype="multipart/form-data"
+            @submit="page === 'newparty' ? createParty($event) : update($event)">
             <input type="hidden" id="id" name="id" v-model="id">
             <input type="hidden" id="user_id" name="user_id" v-model="user_id">
             <div class="input-container">
@@ -22,17 +23,16 @@
                 <input type="file" multiple="multiple" id="photos" name="photos" ref="file" @change="onChange">
             </div>
             <div v-if="page === 'editparty' && showMiniImages" class="mini-images">
-
                 <p>Imagens atuais:</p>
                 <img v-for="(photo, index) in photos" :src="`${photo}`" :key="index">
-
             </div>
+
             <div class="input-container checkbox-container">
                 <label for="privacy">Evento privado?</label>
                 <input type="checkbox" id="privacy" name="privacy" v-model="privacy">
             </div>
 
-            <InputSubmit :text="btnText"/>
+            <InputSubmit :text="btnText" />
 
         </form>
     </div>
@@ -48,24 +48,24 @@ export default {
     components: {
         InputSubmit, Message
     },
-    data(){
+    data() {
         return {
-        id: this.party?._id || null,
-        title: this.party?.title || null,
-        description: this.party?.description || null,
-        party_date: this.party?.partyDate || null,
-        photos: this.party?.photos || [],
-        privacy: this.party?.privacy || false,
-        user_id: this.party?.userId || null,
-        msg: null,
-        msgClass: null,
-        showMiniImages: true,
-    }
+            id: this.party?._id || null,
+            title: this.party?.title || null,
+            description: this.party?.description || null,
+            party_date: this.party?.partyDate || null,
+            photos: this.party?.photos || [],
+            privacy: this.party?.privacy || false,
+            user_id: this.party?.userId || null,
+            msg: null,
+            msgClass: null,
+            showMiniImages: true,
+        }
 
     },
     props: ["party", "page", "btnText"],
 
-   
+
 
     methods: {
         async createParty(e) {
@@ -79,45 +79,45 @@ export default {
             formData.append('party_date', this.party_date);
             formData.append('privacy', this.privacy);
 
-            if(this.photos.length > 0){
-                for(const i of Object.keys(this.photos)){
+            if (this.photos.length > 0) {
+                for (const i of Object.keys(this.photos)) {
                     formData.append('photos', this.photos[i]);
                 }
             }
 
             //pegar token da storage
             const token = this.$store.getters.token;
-            
 
-            await fetch("http://localhost:3000/api/party",{
+
+            await fetch("http://localhost:3000/api/party", {
                 method: "POST",
                 headers: {
                     "auth-token": token
                 },
                 body: formData
             })
-            .then((resp)=> resp.json())
-            .then((data)=>{
+                .then((resp) => resp.json())
+                .then((data) => {
 
-                if(data.error){
-                    this.msg = data.error;
-                    this.msgClass = "error";
-                    
-                    console.log(formData);
-                }else{
-                    this.msg = data.msg;
-                    this.msgClass = "success";
-                }
+                    if (data.error) {
+                        this.msg = data.error;
+                        this.msgClass = "error";
 
-                setTimeout(()=>{
-                    this.msg = null;
-
-                    if(!data.error){
-                        this.$router.push('dashboard')
+                        console.log(formData);
+                    } else {
+                        this.msg = data.msg;
+                        this.msgClass = "success";
                     }
-                }, 2000)
 
-            });
+                    setTimeout(() => {
+                        this.msg = null;
+
+                        if (!data.error) {
+                            this.$router.push('dashboard')
+                        }
+                    }, 2000)
+
+                });
 
         },
 
@@ -134,7 +134,7 @@ export default {
         }
     }
 
-    
+
 }
 </script>
 
@@ -164,23 +164,23 @@ export default {
     border: 1px solid#e8e8e8;
 }
 
-.checkbox-container{
+.checkbox-container {
     flex-direction: row;
 
 }
 
-.checkbox-container input{
+.checkbox-container input {
     margin-left: 12px;
     margin-top: 0px;
 }
 
-.mini-images{
+.mini-images {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 0px;
 }
 
-.mini-images p{
+.mini-images p {
     width: 100%;
     font-weight: bold;
     margin-bottom: 15px;
